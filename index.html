@@ -1,0 +1,963 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#e9e9f6">
+<title>Lunelle</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap');
+
+:root {
+  --blue: #b9d3f5;
+  --pink: #ecc8dc;
+  --lavender: #d6d0f0;
+  --text: #41414e;
+  --muted: #898997;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  color: var(--text);
+  min-height: 100vh;
+  background: #f6f5fb;
+  overflow-x: hidden;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+/* BACKGROUND */
+
+.background {
+  position: fixed;
+  inset: 0;
+  z-index: -3;
+  background:
+    radial-gradient(ellipse at 10% 10%, rgba(181,211,249,.8), transparent 45%),
+    radial-gradient(ellipse at 90% 85%, rgba(236,193,218,.8), transparent 45%),
+    radial-gradient(ellipse at 70% 15%, rgba(218,207,245,.7), transparent 45%),
+    linear-gradient(135deg, #f9f9ff, #f5f3fa, #fff8fb);
+}
+
+/* LIGHT ORBS */
+
+.orb {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(65px);
+  z-index: -2;
+  pointer-events: none;
+  opacity: .65;
+  animation: floatOrb 16s ease-in-out infinite alternate;
+}
+
+.orb1 {
+  width: 260px;
+  height: 260px;
+  background: #b8d5fa;
+  top: -90px;
+  left: -100px;
+}
+
+.orb2 {
+  width: 280px;
+  height: 280px;
+  background: #edc6dc;
+  bottom: -100px;
+  right: -100px;
+  animation-delay: -5s;
+}
+
+.orb3 {
+  width: 200px;
+  height: 200px;
+  background: #d7d0f3;
+  top: 40%;
+  right: -120px;
+  animation-delay: -8s;
+}
+
+/* PARTICLES */
+
+#particles {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.particle {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: white;
+  box-shadow: 0 0 8px rgba(255,255,255,.9);
+  animation: particleMove linear infinite;
+}
+
+/* OPENING */
+
+#opening {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 25px;
+  background: rgba(255,255,255,.17);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: opacity 1s ease, visibility 1s ease;
+}
+
+#opening.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.opening-card {
+  text-align: center;
+  width: 100%;
+  max-width: 430px;
+  padding: 42px 26px;
+  border: 1px solid rgba(255,255,255,.65);
+  border-radius: 30px;
+  background: rgba(255,255,255,.38);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 20px 80px rgba(153,151,190,.09);
+  animation: cardAppear 1.4s ease;
+}
+
+.eyebrow {
+  font-size: 10px;
+  letter-spacing: 4px;
+  color: #8b8ba0;
+}
+
+.opening-decoration {
+  margin: 22px auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 9px;
+}
+
+.opening-decoration span {
+  height: 1px;
+  width: 42px;
+  background: linear-gradient(90deg, var(--blue), var(--pink));
+}
+
+.opening-decoration i {
+  font-style: normal;
+  color: #d7aacb;
+  font-size: 13px;
+}
+
+.opening-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(38px, 9vw, 58px);
+  font-weight: 400;
+  line-height: 1.25;
+  color: #494957;
+}
+
+.opening-title em {
+  font-style: italic;
+  background: linear-gradient(100deg, #94b9ed, #d9aaca);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+#typing {
+  max-width: 300px;
+  min-height: 60px;
+  margin: 20px auto;
+  color: #8d8d9c;
+  font-size: 12px;
+  line-height: 2;
+}
+
+.open-button {
+  border: 1px solid rgba(255,255,255,.8);
+  background: rgba(255,255,255,.5);
+  backdrop-filter: blur(10px);
+  color: #747486;
+  border-radius: 40px;
+  padding: 14px 28px;
+  font-size: 11px;
+  letter-spacing: 1px;
+  box-shadow: 0 5px 25px rgba(161,165,196,.1);
+  transition: .3s;
+}
+
+.open-button:active {
+  transform: scale(.97);
+}
+
+.open-button:hover {
+  background: rgba(255,255,255,.8);
+}
+
+.open-heart {
+  margin-top: 25px;
+  color: #d5a8c8;
+}
+
+/* MAIN */
+
+#main {
+  min-height: 100vh;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 1s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+#main.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.container {
+  width: 100%;
+  max-width: 740px;
+  margin: auto;
+  padding: 30px 24px;
+  flex: 1;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 50px;
+}
+
+.logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 23px;
+  color: #535362;
+  letter-spacing: 1px;
+}
+
+.logo span {
+  color: #c5afd9;
+}
+
+.date {
+  font-size: 10px;
+  color: #8c8c9b;
+  letter-spacing: 1px;
+}
+
+/* PROGRESS */
+
+.progress-shell {
+  height: 3px;
+  width: 100%;
+  border-radius: 10px;
+  background: rgba(255,255,255,.45);
+  overflow: hidden;
+  margin-bottom: 32px;
+}
+
+#progress {
+  height: 100%;
+  width: 16.66%;
+  border-radius: 10px;
+  background: linear-gradient(90deg, #a9c9f1, #dcb6d3);
+  transition: width .7s ease;
+}
+
+/* GLASS PAGE */
+
+.page {
+  display: none;
+  min-height: 440px;
+  padding: 35px 30px;
+  border: 1px solid rgba(255,255,255,.65);
+  border-radius: 26px;
+  background: rgba(255,255,255,.38);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 20px 60px rgba(160,155,191,.07);
+}
+
+.page.active {
+  display: block;
+  animation: pageEnter .7s ease;
+}
+
+.page-number {
+  color: #a0a0ad;
+  font-size: 10px;
+  letter-spacing: 3px;
+  margin-bottom: 30px;
+}
+
+.page h1 {
+  font-family: 'Playfair Display', serif;
+  font-weight: 400;
+  font-size: clamp(34px, 7vw, 50px);
+  line-height: 1.35;
+  color: #454552;
+  margin-bottom: 27px;
+}
+
+.gradient-text {
+  background: linear-gradient(100deg, #93b8eb, #d6a9cb);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.page p {
+  font-size: 13px;
+  line-height: 2.15;
+  color: #81818f;
+  font-weight: 300;
+  margin-bottom: 16px;
+}
+
+.quote {
+  margin-top: 30px;
+  padding: 12px 0 12px 18px;
+  border-left: 2px solid #c8c1e4;
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  color: #797989;
+  font-size: 17px;
+  line-height: 1.9;
+}
+
+.small-note {
+  margin-top: 35px;
+  color: #a0a0ad;
+  font-size: 10px;
+  letter-spacing: 1px;
+}
+
+.heart {
+  color: #d7a8c9;
+  margin-top: 30px;
+  font-size: 18px;
+}
+
+/* NAVIGATION */
+
+.navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 25px;
+  padding: 20px 3px;
+}
+
+.nav-button {
+  border: 1px solid rgba(255,255,255,.8);
+  background: rgba(255,255,255,.38);
+  backdrop-filter: blur(8px);
+  color: #777787;
+  border-radius: 30px;
+  padding: 12px 23px;
+  font-size: 11px;
+  transition: .3s;
+}
+
+.nav-button:active {
+  transform: scale(.96);
+}
+
+.nav-button:disabled {
+  opacity: .3;
+  cursor: default;
+}
+
+#pageCount {
+  color: #9696a5;
+  font-size: 10px;
+  letter-spacing: 2px;
+}
+
+.read-again {
+  display: block;
+  margin-top: 28px;
+  border: 1px solid rgba(255,255,255,.8);
+  border-radius: 30px;
+  background: rgba(255,255,255,.45);
+  backdrop-filter: blur(10px);
+  padding: 12px 24px;
+  color: #777787;
+  font-size: 11px;
+  transition: .3s;
+}
+
+.read-again:active {
+  transform: scale(.97);
+}
+
+footer {
+  text-align: center;
+  padding: 25px 20px 35px;
+  color: #9999a8;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+}
+
+/* MUSIC BUTTON */
+
+.music-button {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  border: 1px solid rgba(255,255,255,.8);
+  border-radius: 40px;
+  padding: 12px 17px;
+  background: rgba(255,255,255,.5);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  color: #797989;
+  font-size: 11px;
+  box-shadow: 0 6px 25px rgba(150,150,180,.1);
+  transition: .3s;
+}
+
+.music-button:active {
+  transform: scale(.96);
+}
+
+.music-button.playing {
+  border-color: rgba(205,174,215,.6);
+}
+
+#musicIcon {
+  color: #c5a8d5;
+  font-size: 14px;
+}
+
+/* ANIMATIONS */
+
+@keyframes pageEnter {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes cardAppear {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes floatOrb {
+  from {
+    transform: translate(0,0) scale(1);
+  }
+  to {
+    transform: translate(35px,-25px) scale(1.12);
+  }
+}
+
+@keyframes particleMove {
+  from {
+    transform: translateY(110vh);
+    opacity: 0;
+  }
+  15% {
+    opacity: .7;
+  }
+  85% {
+    opacity: .6;
+  }
+  to {
+    transform: translateY(-10vh);
+    opacity: 0;
+  }
+}
+
+/* MOBILE */
+
+@media (max-width: 480px) {
+  .container {
+    padding: 22px 17px;
+  }
+
+  header {
+    margin-bottom: 38px;
+  }
+
+  .page {
+    padding: 27px 23px;
+    min-height: 440px;
+    border-radius: 22px;
+  }
+
+  .page p {
+    font-size: 12.5px;
+  }
+
+  .opening-card {
+    padding: 38px 20px;
+    border-radius: 25px;
+  }
+
+  .music-button {
+    right: 14px;
+    bottom: 14px;
+  }
+
+  footer {
+    padding-bottom: 75px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .orb,
+  .particle {
+    animation: none;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<!-- BACKGROUND -->
+<div class="background"></div>
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+<div class="orb orb3"></div>
+<div id="particles"></div>
+
+<!-- AUDIO -->
+<audio id="bgMusic" loop preload="auto">
+  <source src="music.mp3" type="audio/mpeg">
+</audio>
+
+<!-- OPENING -->
+<div id="opening">
+  <div class="opening-card">
+
+    <div class="eyebrow">A LITTLE PAGE FOR YOU</div>
+
+    <div class="opening-decoration">
+      <span></span>
+      <i>✦</i>
+      <span></span>
+    </div>
+
+    <h1 class="opening-title">
+      A page,<br>
+      <em>just for you.</em>
+    </h1>
+
+    <div id="typing"></div>
+
+    <button class="open-button" onclick="openPage()">
+      Open this page
+    </button>
+
+    <div class="open-heart">♡</div>
+
+  </div>
+</div>
+
+<!-- MAIN -->
+<div id="main">
+  <div class="container">
+
+    <header>
+      <div class="logo">Lunelle<span>.</span></div>
+      <div class="date" id="date"></div>
+    </header>
+
+    <div class="progress-shell">
+      <div id="progress"></div>
+    </div>
+
+    <!-- PAGE 1 -->
+    <section class="page active">
+      <div class="page-number">01 — INTRODUCTION</div>
+
+      <h1>
+        A little page<br>
+        <span class="gradient-text">for you.</span>
+      </h1>
+
+      <p>
+        Ada beberapa hal yang mungkin jarang disampaikan,
+        jadi aku menuliskannya di sini.
+      </p>
+
+      <p>
+        Sederhana saja, tentang pertemuan, cerita,
+        dan seseorang yang cukup menyenangkan untuk dikenal.
+      </p>
+
+      <div class="small-note">Take your time reading this.</div>
+    </section>
+
+    <!-- PAGE 2 -->
+    <section class="page">
+      <div class="page-number">02 — THE MEETING</div>
+
+      <h1>
+        How we<br>
+        <span class="gradient-text">met.</span>
+      </h1>
+
+      <p>
+        Aku nggak pernah benar-benar tahu bagaimana
+        sebuah pertemuan bisa menjadi sesuatu yang berarti.
+      </p>
+
+      <p>
+        Awalnya mungkin hanya kenal biasa, bertukar cerita,
+        dan berbincang tentang hal-hal sederhana.
+      </p>
+
+      <p>
+        Tapi ternyata, mengenalmu menjadi salah satu
+        hal yang cukup menyenangkan.
+      </p>
+    </section>
+
+    <!-- PAGE 3 -->
+    <section class="page">
+      <div class="page-number">03 — LITTLE THINGS</div>
+
+      <h1>
+        The little things<br>
+        <span class="gradient-text">matter.</span>
+      </h1>
+
+      <p>
+        Obrolan kecil, candaan, dan hal-hal random
+        yang mungkin terlihat biasa saja.
+      </p>
+
+      <p>
+        Entah kenapa, hal-hal seperti itu bisa
+        meninggalkan kesan tersendiri. Ada kalanya
+        hari terasa lebih menyenangkan hanya karena
+        percakapan sederhana.
+      </p>
+
+      <div class="quote">
+        Aku senang bisa mengenal seseorang dengan
+        caranya sendiri, dan orang itu adalah kamu.
+      </div>
+    </section>
+
+    <!-- PAGE 4 -->
+    <section class="page">
+      <div class="page-number">04 — THINGS I REMEMBER</div>
+
+      <h1>
+        Some things<br>
+        <span class="gradient-text">stay.</span>
+      </h1>
+
+      <p>
+        Nggak semua hal harus diabadikan dalam foto
+        untuk bisa diingat.
+      </p>
+
+      <p>
+        Ada hal-hal kecil yang mungkin terlihat biasa,
+        tapi tetap meninggalkan kesan tersendiri.
+        Beberapa obrolan, candaan, dan waktu yang
+        sempat kita habiskan untuk saling mengenal.
+      </p>
+
+      <p>
+        Mungkin sederhana, tapi aku tetap senang
+        pernah merasakan hal-hal itu.
+      </p>
+    </section>
+
+    <!-- PAGE 5 -->
+    <section class="page">
+      <div class="page-number">05 — A MESSAGE</div>
+
+      <h1>
+        Just something<br>
+        <span class="gradient-text">I wanted to say.</span>
+      </h1>
+
+      <p>
+        Dari sekian banyak orang yang mungkin bisa
+        kutemui, aku cukup bersyukur karena salah
+        satunya adalah kamu.
+      </p>
+
+      <p>
+        Aku benar-benar senang bisa bertemu dan
+        mengenalmu. Terima kasih sudah hadir,
+        sudah berbagi cerita, dan sudah menjadi
+        dirimu sendiri.
+      </p>
+
+      <p>
+        Semoga hari-harimu selalu dipenuhi hal baik,
+        banyak alasan untuk tersenyum, dan kebahagiaan
+        dari hal-hal sederhana.
+      </p>
+    </section>
+
+    <!-- PAGE 6 -->
+    <section class="page">
+      <div class="page-number">06 — THE LAST PAGE</div>
+
+      <h1>
+        I'm glad<br>
+        <span class="gradient-text">we met.</span>
+      </h1>
+
+      <p>
+        Mungkin ini hanya halaman kecil,
+        tapi dibuat dengan maksud yang baik.
+      </p>
+
+      <p>
+        Senang bisa bertemu denganmu.
+      </p>
+
+      <div class="heart">♡</div>
+
+      <div class="small-note">
+        — a little note, just for you.
+      </div>
+
+      <button class="read-again" onclick="readAgain()">
+        Read again
+      </button>
+    </section>
+
+    <!-- NAVIGATION -->
+    <div class="navigation">
+      <button class="nav-button" id="backBtn" onclick="goBack()">
+        ← Back
+      </button>
+
+      <div id="pageCount">01 / 06</div>
+
+      <button class="nav-button" id="nextBtn" onclick="goNext()">
+        Next →
+      </button>
+    </div>
+
+  </div>
+
+  <footer>— a little note, just for you.</footer>
+</div>
+
+<!-- MUSIC CONTROL -->
+<button class="music-button" id="musicButton" onclick="toggleMusic()">
+  <span id="musicIcon">♫</span>
+  <span id="musicText">Play music</span>
+</button>
+
+<script>
+
+/* PARTICLES */
+
+const particleBox = document.getElementById("particles");
+
+for (let i = 0; i < 24; i++) {
+  const particle = document.createElement("span");
+  particle.className = "particle";
+
+  particle.style.left = Math.random() * 100 + "%";
+  particle.style.animationDuration = (10 + Math.random() * 18) + "s";
+  particle.style.animationDelay = (-Math.random() * 20) + "s";
+
+  const size = 2 + Math.random() * 2;
+  particle.style.width = size + "px";
+  particle.style.height = size + "px";
+
+  particleBox.appendChild(particle);
+}
+
+/* TYPING */
+
+const openingMessage =
+  "Ada sesuatu yang ingin kusampaikan, jadi aku menuliskannya di sebuah halaman kecil.";
+
+const typingElement = document.getElementById("typing");
+
+let typingIndex = 0;
+
+function typeText() {
+  if (typingIndex < openingMessage.length) {
+    typingElement.textContent += openingMessage.charAt(typingIndex);
+    typingIndex++;
+
+    setTimeout(typeText, 35);
+  }
+}
+
+typeText();
+
+/* DATE */
+
+document.getElementById("date").textContent =
+  new Date().toLocaleDateString("id-ID", {
+    day: "numeric",
+    month: "long",
+    year: "numeric"
+  });
+
+/* MUSIC */
+
+const music = document.getElementById("bgMusic");
+const musicButton = document.getElementById("musicButton");
+const musicText = document.getElementById("musicText");
+const musicIcon = document.getElementById("musicIcon");
+
+music.volume = 0.25;
+
+function updateMusicUI() {
+  if (!music.paused) {
+    musicText.textContent = "Music on";
+    musicIcon.textContent = "♫";
+    musicButton.classList.add("playing");
+  } else {
+    musicText.textContent = "Play music";
+    musicIcon.textContent = "♫";
+    musicButton.classList.remove("playing");
+  }
+}
+
+async function toggleMusic() {
+  if (music.paused) {
+    try {
+      await music.play();
+    } catch (error) {
+      musicText.textContent = "Try again";
+    }
+  } else {
+    music.pause();
+  }
+
+  updateMusicUI();
+}
+
+music.addEventListener("play", updateMusicUI);
+music.addEventListener("pause", updateMusicUI);
+
+/* OPEN */
+
+function openPage() {
+  document.getElementById("opening").classList.add("hidden");
+  document.getElementById("main").classList.add("visible");
+
+  music.play().catch(() => {
+    updateMusicUI();
+  });
+
+  currentPage = 0;
+  updatePage();
+}
+
+/* PAGES */
+
+const pages = document.querySelectorAll(".page");
+let currentPage = 0;
+
+function updatePage() {
+  pages.forEach((page, index) => {
+    page.classList.remove("active");
+
+    if (index === currentPage) {
+      page.classList.add("active");
+    }
+  });
+
+  document.getElementById("progress").style.width =
+    ((currentPage + 1) / pages.length * 100) + "%";
+
+  document.getElementById("pageCount").textContent =
+    String(currentPage + 1).padStart(2, "0") +
+    " / " +
+    String(pages.length).padStart(2, "0");
+
+  document.getElementById("backBtn").disabled =
+    currentPage === 0;
+
+  document.getElementById("nextBtn").disabled =
+    currentPage === pages.length - 1;
+}
+
+function goNext() {
+  if (currentPage < pages.length - 1) {
+    currentPage++;
+    updatePage();
+  }
+}
+
+function goBack() {
+  if (currentPage > 0) {
+    currentPage--;
+    updatePage();
+  }
+}
+
+/* READ AGAIN */
+
+function readAgain() {
+  currentPage = 0;
+  updatePage();
+
+  document.getElementById("main").classList.remove("visible");
+  document.getElementById("opening").classList.remove("hidden");
+}
+
+/* KEYBOARD */
+
+document.addEventListener("keydown", function(event) {
+  if (!document.getElementById("main").classList.contains("visible")) {
+    return;
+  }
+
+  if (event.key === "ArrowRight") goNext();
+  if (event.key === "ArrowLeft") goBack();
+});
+
+</script>
+
+</body>
+</html>
